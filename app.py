@@ -2,10 +2,11 @@ import openai
 import streamlit as st
 from prompts import PROMPT_SUMMARY, REFINE_PROMPT_SUMMARY
 from llm_functions import initialize_llm, initialize_summary, split_text
+from dotenv import load_dotenv
+import os
+load_dotenv()
 #setting open api key
-openai_api_key="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"
-
-
+openai_api_key=os.getenv("OPENAI_API_KEY")
 with st.container():
     st.markdown("""
     # MOM

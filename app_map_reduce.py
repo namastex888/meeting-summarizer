@@ -8,8 +8,12 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from langchain.text_splitter import TokenTextSplitter
 from langchain.docstore.document import Document
+from dotenv import load_dotenv
+import os
+load_dotenv()
 #setting open api key
-openai_api_key="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"
+openai_api_key=os.getenv("OPENAI_API_KEY")
+
 
 #Function to initialize the large model
 def initialize_llm(openai_api_key, model_name, temperature):
@@ -111,7 +115,8 @@ if 'transcript' in locals() and transcript:
         # Return the results of the map steps in the output
         return_intermediate_steps=False,
     )
-    transcript_chunks = split_text(data=transcript, chunk_size=12000, chunk_overlap=0)
+    
+    transcript_chunks = split_text(data=transcript, chunk_size=14000, chunk_overlap=0)
     # text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
     #     chunk_size=12288, chunk_overlap=0
     # )
