@@ -49,15 +49,25 @@ if 'transcript' in locals() and transcript:
     ----------
     {docs}
     ----------
-    Analyze the git commit log to estimate the work done. Lines with '-' are code removals, and lines with '+' are code additions. Assign work units based on the following factors:
+    Analyze the provided partial git log of a contributor. The log will contain code additions ('+') and deletions ('-'), and the type of code (HTML, frontend non-HTML, backend). Calculate the work units using these factors:
 
-    Complexity: If the code involves intricate logic, such as changes in the React components or Next.js pages, add 2 work units. For less complex changes, add 1 work unit.
+    Code Addition: Assign 0.5 points for each new line of HTML code added, 1 point for frontend non-HTML code, and 3 points for backend code.
 
-    Importance: If the change involves critical components like LoginModal.tsx or Hero.tsx, add 2 work units. For changes in less critical components, add 1 work unit.
+    Code Modification: Assign 0.5 points for each existing line modified, regardless of code type.
 
-    Workload: Analyze code removed vs code added, and assign 1 work unit for every 10 lines changed. However, remember that the quality of code can outweigh the quantity, and small, efficient code changes can be more valuable than large, inefficient ones.
+    Code Deletion: Assign 0.2 points for each line deleted, regardless of code type.
 
-    Sum these to get the total work units for this commit. Provide the output in the following format: '[total work units] work units.'
+    Affected Files: Add 3 points for each file affected.
+
+    Code Review: Assign 4 points for each code review conducted.
+
+    Complexity Points: For each function, calculate its cyclomatic complexity (number of linearly independent paths through a program's source code). Assign 0.5 points for each point of cyclomatic complexity.
+
+    Sum these to get the total work units for this log. The output should be in the following format:
+
+    Code Additions: [number of lines added] lines ([points for HTML] points HTML, [points for frontend] points frontend, [points for backend] points backend) Code Modifications: [number of lines modified] lines ([points] points) Code Deletions: [number of lines deleted] lines ([points] points) Affected Files: [number of affected files] ([points] points) Code Reviews: [number of code reviews] ([points] points) Complexity Points: [number of complexity points] ([points] points) Total Points: [total points]
+
+    Please ensure the response is generated consistently with these instructions.
     """
     map_prompt = PromptTemplate.from_template(map_template)
     map_chain = LLMChain(llm=llm_gpt3, prompt=map_prompt)
