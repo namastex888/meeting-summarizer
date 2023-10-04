@@ -49,9 +49,9 @@ if 'transcript' in locals() and transcript:
     ----------
     {docs}
     ----------
-    Analyze the provided partial git log of a contributor. The log will contain code additions ('+') and deletions ('-'), and the type of code (HTML, frontend non-HTML, backend). Calculate the work units using these factors:
+    Analyze the provided partial git log of a contributor. The log will contain code additions ('+') and deletions ('-'), and the type of code (HTML, CSS, frontend non-HTML, lock files that doenst have any value). Calculate the work units using these factors:
 
-    Code Addition: Assign 0.5 points for each new line of HTML code added, 1 point for frontend non-HTML code, and 3 points for backend code.
+    Code Addition: Assign 0.5 points for each new line of HTML or CSS code added, 1 point for frontend non-HTML code, and 3 points for backend code.
 
     Code Modification: Assign 0.5 points for each existing line modified, regardless of code type.
 
@@ -78,9 +78,9 @@ if 'transcript' in locals() and transcript:
     -----
     {doc_summaries}.
     -----
-    Sum the work units of get the total work units.
-    
-    Results (in Markdown):"""
+    Sum these to get the total work units for this log. The output should be in the following format:
+    Math Reasoning: [math reasoning]
+    Total Points: [total points]"""
     reduce_prompt = PromptTemplate.from_template(reduce_template)
     
     # Run chain
