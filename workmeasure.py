@@ -29,7 +29,7 @@ def split_text(data, chunk_size, chunk_overlap):
 
 with st.container():
     st.markdown("""
-    # MOM
+    # WORK UNIT CALCULATOR
     """)
 
 uploaded_file = st.file_uploader("Upload a text file", type=["json","srt","txt"])
