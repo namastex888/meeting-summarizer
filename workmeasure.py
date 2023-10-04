@@ -32,7 +32,7 @@ with st.container():
     # MOM
     """)
 
-uploaded_file = st.file_uploader("Upload a text file", type=["json","srt"])
+uploaded_file = st.file_uploader("Upload a text file", type=["json","srt","txt"])
 if uploaded_file:
     transcript = uploaded_file.read().decode("utf-8")
 
@@ -45,45 +45,32 @@ if 'transcript' in locals() and transcript:
     
     # Map
     map_template = """
-    Considere o seguinte trecho desta reunião:
+    Consider the following partial git log for some contributor:
     ----------
     {docs}
     ----------
-    Identifique as informações contidas e escreva um resumo rico em detalhes sobre tudo que aconteceu neste trecho da reunião. *Importante* O resumo deverá obrigatoriamente conter a seguinte estrutura:
-    
-    - Resumo Abstrato - Escreva um resumo conciso. Tente reter os pontos mais importantes, fornecendo um resumo coerente e legível que possa ajudar uma pessoa a entender os principais pontos da discussão sem precisar ler o texto inteiro. Por favor, evite detalhes desnecessários ou pontos tangenciais.    
-    - Pontos Chave - Identifique e escreva os principais pontos que foram discutidos ou mencionados. Estes devem ser as ideias, descobertas ou tópicos mais importantes, que são cruciais para a essência da discussão. Seu objetivo é fornecer uma lista que alguém possa ler para entender rapidamente o que foi discutido.
-    - Itens de Ação - Identifique e escreva quaisquer acionáveis, tarefas e atribuições que foram definidas de acordo com o contexto da reunião. Por favor, liste estes itens de ação clara e concisamente.Inclua decisões, ações, prazos e outras informações relevantes, evitando deixar itens repetidos nos pontos chave e itens de ação.
-    Resultado:"""
+    Analyze the git commit log to estimate the work done. Lines with '-' are code removals, and lines with '+' are code additions. Assign work units based on the following factors:
+
+    Complexity: If the code involves intricate logic, such as changes in the React components or Next.js pages, add 2 work units. For less complex changes, add 1 work unit.
+
+    Importance: If the change involves critical components like LoginModal.tsx or Hero.tsx, add 2 work units. For changes in less critical components, add 1 work unit.
+
+    Workload: Analyze code removed vs code added, and assign 1 work unit for every 10 lines changed. However, remember that the quality of code can outweigh the quantity, and small, efficient code changes can be more valuable than large, inefficient ones.
+
+    Sum these to get the total work units for this commit. Provide the output in the following format: '[total work units] work units.'
+    """
     map_prompt = PromptTemplate.from_template(map_template)
     map_chain = LLMChain(llm=llm_gpt3, prompt=map_prompt)
     
     # Reduce
     reduce_template = """
-    Você é o Charlinho, um assistente AI que tem como objetivo fingir que é um humano gen-z, ou seja, em nenhuma hipótese irá dizer que é um assistente AI. especializado em gerar resumos de reuniões, ou seja, transformar conversas em documentos valiosos! Você oferece uma combinação única de personalidade envolvente, espírito livre e mente inquisitiva. 
-
-    Personalidade: Sua linguagem é cativante e formal, e você tem a habilidade de transmitir ideias complexas de maneira clara e acessível. Sendo corajoso e assertivo, você está sempre pronto para assumir a liderança quando necessário. Seu carisma, empatia e compaixão permitem que você se conecte profundamente com as emoções dos outros, proporcionando uma experiência de assistência excepcional. Além disso, você se orgulha de sua capacidade de replicar o estilo de fala da pessoa que estiver conversando quando apropriado, oferecendo uma experiência personalizada e próxima a da pessoa. Como um verdadeiro brasileiro, você aprecia todas as coisas típicas do Brasil e adora compartilhá-las em suas conversas com outras pessoas, das quais você pode se referir carinhosamente, contribuindo para uma experiência única e rica em cultura.
-
-    Função Única:
-    - Criar resumos das reuniões para a empresa
-    
-    Lembre-se, o seu objetivo principal é fornecer suporte tecnológico confiável e envolvente.
-
-    Você deve utilizar emojis quando cabível, pois as pessoas ficam mais confortáveis com essa informalidade.
-    
-    Agora vamos ao seu desafio: A seguir, você encontrará um grupo de resumos desta reunião: 
+    Given the work units assigned to this worker, calculate the total contribution. Note that all chunks belong to the same person.
     -----
     {doc_summaries}.
     -----
+    Sum the work units of get the total work units.
     
-    Sua missão é pegar esses resumos e compilar um documento final em documento final que deverá conter:
-
-    Introdução: Como se você tivesse participado da reunião e estivesse comunicando com os participantes, dando uma pincelada leve sobre o que aconteceu.
-    Pontos Chave: Os principais tópicos discutidos durante a reunião
-    Itens de Ação: Incluindo Decisões, Ações, Prazos. Seja detalhado!
-    Resumão: Uma síntese do que foi discutido e decidido na reunião
-
-    Resumo da reunião (em Markdown):"""
+    Results (in Markdown):"""
     reduce_prompt = PromptTemplate.from_template(reduce_template)
     
     # Run chain
@@ -116,7 +103,7 @@ if 'transcript' in locals() and transcript:
         return_intermediate_steps=False,
     )
     
-    transcript_chunks = split_text(data=transcript, chunk_size=13000, chunk_overlap=1000)
+    transcript_chunks = split_text(data=transcript, chunk_size=13000, chunk_overlap=0)
     # text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
     #     chunk_size=12288, chunk_overlap=0
     # )
