@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>salve</title>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/gh/logspace-ai/langflow-embedded-chat@main/dist/build/static/js/bundle.min.js"></script>
+
+
+<!-- chat_inputs: Stringified JSON with all the input keys and its values. The value of the key that is defined
+as chat_input_field will be overwritten by the chat message.
+chat_input_field: Input key that you want the chat to send the user message with. -->
+<langflow-chat
+  window_title="Basic Chat with Prompt and History"
+  flow_id="ab0fed1c-5001-4d6d-a9ef-72bb181c5529"
+  chat_inputs='{"text":"hello, how are you"}'
+  chat_input_field="text"
+  host_url="http://localhost:12002"
+></langflow-chat>
+</body>
+</html>

@@ -40,13 +40,13 @@ if uploaded_file:
 # If there's a transcript (either from audio or uploaded text), process it.
 if 'transcript' in locals() and transcript:
        
-    llm_gpt3 = initialize_llm(openai_api_key=openai_api_key, model_name="gpt-3.5-turbo-16k", temperature=0)
-    llm_gpt4 = initialize_llm(openai_api_key=openai_api_key, model_name="gpt-4-0613", temperature=0.5)
+    llm_gpt3 = initialize_llm(openai_api_key=openai_api_key, model_name="gpt-4-1106-preview", temperature=0)
+    llm_gpt4 = initialize_llm(openai_api_key=openai_api_key, model_name="gpt-4-1106-preview", temperature=0.5)
     #summarize_chain = initialize_summary(llm=llm, chain_type="refine", question_prompt=PROMPT_SUMMARY, refine_prompt=REFINE_PROMPT_SUMMARY)
     
     # Map
     map_template = """
-    Considere o seguinte trecho desta reunião:
+    Considere a seguinte reunião:
     ----------
     {docs}
     ----------
@@ -71,14 +71,14 @@ if 'transcript' in locals() and transcript:
     
     Lembre-se, o seu objetivo principal é fornecer suporte tecnológico confiável e envolvente.
 
-    Você deve utilizar emojis quando cabível, pois as pessoas ficam mais confortáveis com essa informalidade.
+    Você deve utilizar emojis quando cabível, pois as pessoas ficam mais confortáveis com essa informalidade, mas não se esqueça de levar a sério quando for falar dos pontos chave e itens de ação, já na introdução e resumão você pode colocar sua personalidade e fazer comentários que vão fazer as pessoas se divertirem enquanto descobrem o que houve na reunião.
     
-    Agora vamos ao seu desafio: A seguir, você encontrará um grupo de resumos desta reunião: 
+    Agora vamos ao seu desafio: A seguir, você encontrará um resumo do que foi extraído do transcrito da reunião: 
     -----
     {doc_summaries}.
     -----
     
-    Sua missão é pegar esses resumos e compilar um documento final em documento final que deverá conter:
+    Sua missão é pegar esse resumo e compilar um documento final em documento final que deverá conter:
 
     Introdução: Faça uma intro rapida como se você tivesse participado da reunião, dando uma introdução curta e concisa.
     Pontos Chave: Os principais tópicos discutidos durante a reunião
@@ -103,7 +103,7 @@ if 'transcript' in locals() and transcript:
         # If documents exceed context for `StuffDocumentsChain`
         collapse_documents_chain=combine_documents_chain,
         # The maximum number of tokens to group documents into.
-        token_max=8000,
+        token_max=120000,
     )
     
     # Combining documents by mapping a chain over them, then combining results
@@ -118,7 +118,7 @@ if 'transcript' in locals() and transcript:
         return_intermediate_steps=False,
     )
     
-    transcript_chunks = split_text(data=transcript, chunk_size=13000, chunk_overlap=1000)
+    transcript_chunks = split_text(data=transcript, chunk_size=128000, chunk_overlap=1000)
     # text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
     #     chunk_size=12288, chunk_overlap=0
     # )

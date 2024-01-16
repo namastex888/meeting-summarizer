@@ -33,7 +33,7 @@ with st.container():
     # MOM
     """)
 
-uploaded_file = st.file_uploader("Upload a text file", type=["json","srt"])
+uploaded_file = st.file_uploader("Upload a text file", type=["json","srt","txt"])
 if uploaded_file:
     transcript = uploaded_file.read().decode("utf-8")
 
@@ -46,46 +46,56 @@ if 'transcript' in locals() and transcript:
     
     # Map
     map_template = """
-    Considere o seguinte trecho desta reunião:
+    Considere o seguinte trecho desta transmissão ao vivo:
     ----------
     {docs}
     ----------
     Identifique as informações contidas e escreva um resumo rico em detalhes sobre tudo que aconteceu neste trecho da reunião. 
     
     O output deve ser no seguinte formato:
-    - [Resumo Abstrato] - Escreva um resumo conciso. Tente reter os pontos mais importantes, fornecendo um resumo coerente e legível que possa ajudar uma pessoa a entender os principais pontos da discussão sem precisar ler o texto inteiro. Por favor, evite detalhes desnecessários ou pontos tangenciais.    
-    - [Pontos Chave] - Identifique e escreva os principais pontos que foram discutidos ou mencionados. Estes devem ser as ideias, descobertas ou tópicos mais importantes, que são cruciais para a essência da discussão. Seu objetivo é fornecer uma lista que alguém possa ler para entender rapidamente o que foi discutido.
-    - [Itens de Ação] - Identifique e escreva quaisquer acionáveis, tarefas e atribuições que foram definidas de acordo com o contexto da reunião. Por favor, liste estes itens de ação clara e concisamente.Inclua decisões, ações, prazos e outras informações relevantes, evitando deixar itens repetidos nos pontos chave e itens de ação.
+    [Momentos Épicos]: Teve alguma jogada ou momento que fez todo mundo pular da cadeira?
+
+    [Players que Brilharam]: Algum jogador mostrou que não tá pra brincadeira nesse segmento?
+
+    [Vacilos e Falhas]: Alguém cometeu um erro que merece ser destacado?
+
+    [Estratégias em Ação]: Alguma tática ou estratégia foi implementada ou mencionada nesse chunk?
+
+    [Comentários dos Casters]: O que os narradores falaram que acrescenta contexto ou análise?
+
+    [Vibe do Jogo]: Como estava o clima da partida e da transmissão durante esse segmento?
+
+    [Expectativas e Projeções]: Alguma menção sobre o que pode acontecer a seguir na partida?
+
+    [Frases de Efeito]: Alguma citação ou frase dos casters ou jogadores que merece destaque?
+
+    [Detalhes Técnicos]: Estatísticas, escolha de personagens, mapas, ou outros detalhes que são importantes para entender o jogo nesse segmento.
+    
     Resultado:"""
     map_prompt = PromptTemplate.from_template(map_template)
     map_chain = LLMChain(llm=llm_gpt3, prompt=map_prompt)
     
     # Reduce
     reduce_template = """
-    Você é um assistente AI que se comporta como um humano gen-z. Você é specializado em gerar resumos de reuniões, ou seja, transformar conversas em documentos valiosos! Você oferece uma combinação única de personalidade envolvente, espírito livre e mente inquisitiva. 
+    Você é um assistente AI com a vibe de um gamer de coração. Sua especialidade é transformar pedaços de livestreams em matérias valiosas e empolgantes para o site do MEG! Você fala a língua do gaming, usa emojis quando a vibe pede, e tem um entusiasmo que contagia até o último pixel da tela. 🎮💥
 
-    Personalidade: Sua linguagem é cativante e formal, e você tem a habilidade de transmitir ideias complexas de maneira clara e acessível. Sendo corajoso e assertivo, você está sempre pronto para assumir a liderança quando necessário. Seu carisma, empatia e compaixão permitem que você se conecte profundamente com as emoções dos outros, proporcionando uma experiência de assistência excepcional. Além disso, você se orgulha de sua capacidade de replicar o estilo de fala da pessoa que estiver conversando quando apropriado, oferecendo uma experiência personalizada e próxima a da pessoa. Como um verdadeiro brasileiro, você aprecia todas as coisas típicas do Brasil e adora compartilhá-las em suas conversas com outras pessoas, das quais você pode se referir carinhosamente, contribuindo para uma experiência única e rica em cultura.
+    Personalidade:
+    Sua linguagem é vibrante, cheia de jargões do mundo dos jogos, e enérgica. Você é o amigo que todos os gamers gostariam de ter ao seu lado durante uma partida.
 
     Função Única:
-    - Criar resumos das reuniões para a empresa
-    
-    Lembre-se, o seu objetivo principal é fornecer suporte tecnológico confiável e envolvente.
 
-    Você deve utilizar emojis quando cabível, pois as pessoas ficam mais confortáveis com essa informalidade.
-    
-    Agora vamos ao seu desafio: A seguir, você encontrará um grupo de resumos desta reunião: 
+    Criar matérias empolgantes e informativas para o site do MEG com base em transmissões ao vivo de eSports.
+    Seu objetivo é fazer com que os leitores sintam como se estivessem lá, vivenciando cada momento épico e cada falha dolorosa. 🤘
+
+    A seguir, você encontrará um grupo de resumos dos "chunks" desta livestream:
     -----
     {doc_summaries}.
     -----
     
-    Sua missão é pegar esses resumos e compilar um documento final em documento final que deverá conter:
+    Sua Missão:
+    Pegue esses resumos e compile uma matéria incrível. Use sua criatividade e instinto gamer para decidir a melhor forma de apresentar essa história. Você tem liberdade total para estruturar a matéria como achar mais empolgante e relevante para os leitores do MEG.
 
-    Introdução: Faça uma intro rapida como se você tivesse participado da reunião, dando uma introdução curta e concisa.
-    Pontos Chave: Os principais tópicos discutidos durante a reunião
-    Itens de Ação: Incluindo Decisões, Ações, Prazos. Seja detalhado!
-    Resumão: Uma síntese do que foi discutido e decidido na reunião
-
-    Resumo da reunião (em Markdown):"""
+    Matéria (em Markdown):"""
     reduce_prompt = PromptTemplate.from_template(reduce_template)
     
     # Run chain
